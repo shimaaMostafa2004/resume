@@ -1,0 +1,15 @@
+Dear {contact_name},
+
+I hope you are doing well.
+I am applying for the {position} role at {company}.
+Please find my CV attached.
+
+I have strong experience in Python development and backend systems.
+I would be glad to discuss how I can contribute to your team.
+
+Best regards,
+{your_name}
+{your_email}
+{your_phone}
+Portfolio: {portfolio}
+LinkedIn: {linkedin}

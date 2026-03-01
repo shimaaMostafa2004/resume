@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Sender</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet" />
+    <style>
+      :root {
+        --surface: #ffffff;
+        --surface-soft: #f8fbff;
+        --border-soft: #e5edf9;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+      }
+
+      body {
+        background:
+          radial-gradient(1200px 500px at 50% -120px, #dbeafe 0%, rgba(219, 234, 254, 0) 70%),
+          linear-gradient(180deg, #f8fbff 0%, #f8fafc 100%);
+        color: var(--text-main);
+      }
+
+      .page-hero {
+        border: 1px solid var(--border-soft);
+        border-radius: 18px;
+        background:
+          linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(255, 255, 255, 0.95) 35%),
+          var(--surface);
+      }
+
+      .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border: 1px solid #bfdbfe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 0.25rem 0.65rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .soft-card {
+        border: 1px solid var(--border-soft);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      .soft-card .card-header {
+        background: var(--surface-soft);
+        border-bottom: 1px solid var(--border-soft);
+        border-radius: 16px 16px 0 0;
+      }
+
+      .panel-note {
+        border: 1px solid #dbe7ff;
+        background: #f8fbff;
+        border-radius: 12px;
+      }
+
+      #body_editor {
+        min-height: 260px;
+      }
+
+      #editor_toolbar {
+        border-radius: 12px 12px 0 0;
+      }
+
+      .ql-toolbar.ql-snow {
+        border: 1px solid #d8e4fb;
+        border-radius: 12px 12px 0 0;
+        background: #fdfefe;
+      }
+
+      .ql-container.ql-snow {
+        border: 1px solid #d8e4fb;
+        border-top: none;
+        border-radius: 0 0 12px 12px;
+        font-size: 0.95rem;
+      }
+
+      .ql-editor {
+        background: #ffffff;
+      }
+
+      .template-chip {
+        border: 1px solid #d6e1f5;
+        background: #ffffff;
+        color: #334155;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        padding: 0.28rem 0.72rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .template-chip:hover {
+        background: #eaf2ff;
+        border-color: #bfd6ff;
+        transform: translateY(-1px);
+      }
+
+      .form-control,
+      .form-select {
+        border-color: #d6e1f5;
+        min-height: 42px;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.12);
+      }
+
+      .send-options {
+        border: 1px solid #dbe7ff;
+        border-radius: 12px;
+        background: #f9fbff;
+      }
+
+      .result-table td {
+        vertical-align: middle;
+      }
+
+      .results-wrap thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #f8fbff;
+      }
+
+      .mobile-results .result-item {
+        border: 1px solid var(--border-soft);
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .mobile-results .result-item + .result-item {
+        margin-top: 0.75rem;
+      }
+
+      .summary-card {
+        border: 1px solid var(--border-soft);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+
+      .summary-card .small {
+        color: var(--text-muted);
+      }
+
+      @media (max-width: 768px) {
+        .page-hero {
+          padding: 1rem !important;
+        }
+
+        .container {
+          padding-left: 0.75rem;
+          padding-right: 0.75rem;
+        }
+
+        .card-body {
+          padding: 1rem;
+        }
+
+        .hero-chip {
+          font-size: 0.72rem;
+        }
+
+        .template-chip {
+          font-size: 0.75rem;
+          padding: 0.25rem 0.6rem;
+        }
+
+        #editor_toolbar {
+          overflow-x: auto;
+          white-space: nowrap;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .ql-toolbar .ql-formats {
+          margin-right: 0.2rem;
+        }
+
+        .ql-editor {
+          min-height: 200px;
+          font-size: 16px;
+        }
+
+        .form-control,
+        .form-select,
+        .btn {
+          font-size: 16px;
+        }
+
+        #submit_btn {
+          width: 100%;
+        }
+
+        .desktop-results {
+          display: none;
+        }
+      }
+
+      @media (min-width: 769px) {
+        .mobile-results {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <div class="page-hero p-4 mb-4 shadow-sm">
+        <div class="hero-chip mb-2">Professional Outreach Tool</div>
+        <h1 class="h3 mb-1">Bulk Company Application Sender</h1>
+        <p class="text-muted mb-0">Upload your company list and CV, compose a polished outreach email, then send with safe controls.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="card shadow-sm soft-card">
+            <div class="card-header">
+              <h2 class="h5 mb-0">Upload Companies File and Send</h2>
+            </div>
+            <div class="card-body">
+              {% if bulk_status_message %}
+              <div class="alert alert-{{ bulk_status_type|default('info') }}" role="alert">{{ bulk_status_message }}</div>
+              {% endif %}
+
+              <div class="alert panel-note" role="alert">
+                <div class="fw-semibold mb-1">Before sending</div>
+                <ul class="mb-0 ps-3 small text-muted">
+                  <li>CSV must include <code>company</code> and <code>email</code> columns.</li>
+                  <li>Maximum upload size: {{ max_upload_mb }} MB.</li>
+                  <li>Maximum company rows per upload: {{ max_company_rows }}.</li>
+                </ul>
+              </div>
+
+              <form id="bulk_form" method="post" action="{{ url_for('bulk_send_applications') }}" enctype="multipart/form-data" class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="companies_csv">Companies CSV *</label>
+                  <input id="companies_csv" name="companies_csv" type="file" class="form-control" accept=".csv" required />
+                  <div class="form-text">Required columns: company, email</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label" for="bulk_cv">CV File *</label>
+                  <input id="bulk_cv" name="bulk_cv" type="file" class="form-control" accept=".pdf,.doc,.docx,.rtf,.txt" required />
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="subject_template">Subject Template *</label>
+                  <input
+                    id="subject_template"
+                    name="subject_template"
+                    type="text"
+                    class="form-control"
+                    maxlength="180"
+                    value="{{ form_state.subject_template }}"
+                    required
+                  />
+                  <div class="form-text">Optimized automatically (trimmed + max 180 chars).</div>
+                  <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button type="button" class="template-chip" data-target="subject" data-value="{position}">+ {position}</button>
+                    <button type="button" class="template-chip" data-target="subject" data-value="{company}">+ {company}</button>
+                    <button type="button" class="template-chip" data-target="subject" data-value="{your_name}">+ {your_name}</button>
+                  </div>
+                </div>
+
+                <div class="col-12 mb-1">
+                  <label class="form-label">Body Template (Rich Text Editor) *</label>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted">Use placeholders to personalize each company email.</small>
+                    <button type="button" id="reset_professional_template" class="btn btn-outline-secondary btn-sm">Use Professional Template</button>
+                  </div>
+                  <div id="editor_toolbar">
+                    <span class="ql-formats">
+                      <select class="ql-header">
+                        <option selected></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                      </select>
+                      <select class="ql-size"></select>
+                    </span>
+                    <span class="ql-formats">
+                      <button class="ql-bold"></button>
+                      <button class="ql-italic"></button>
+                      <button class="ql-underline"></button>
+                    </span>
+                    <span class="ql-formats">
+                      <button class="ql-list" value="ordered"></button>
+                      <button class="ql-list" value="bullet"></button>
+                      <select class="ql-align"></select>
+                    </span>
+                    <span class="ql-formats">
+                      <select class="ql-color"></select>
+                      <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                      <button class="ql-link"></button>
+                      <button class="ql-clean"></button>
+                    </span>
+                  </div>
+                  <div id="body_editor"></div>
+                  <input type="hidden" id="body_template_html" name="body_template_html" />
+                  <div class="form-text">
+                    Placeholders: {company}, {email}, {contact_name}, {position}, {your_name}, {your_email}, {your_phone}, {portfolio}, {linkedin}
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button type="button" class="template-chip" data-target="editor" data-value="{contact_name}">{contact_name}</button>
+                    <button type="button" class="template-chip" data-target="editor" data-value="{company}">{company}</button>
+                    <button type="button" class="template-chip" data-target="editor" data-value="{position}">{position}</button>
+                    <button type="button" class="template-chip" data-target="editor" data-value="{your_name}">{your_name}</button>
+                    <button type="button" class="template-chip" data-target="editor" data-value="{your_email}">{your_email}</button>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="send-options p-3">
+                    <div class="fw-semibold mb-2">Send Options</div>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label" for="delay_seconds">Delay (seconds)</label>
+                        <input id="delay_seconds" name="delay_seconds" type="number" min="0" step="0.5" value="{{ form_state.delay_seconds }}" class="form-control" />
+                      </div>
+                      <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-check mb-2">
+                          <input class="form-check-input" type="checkbox" id="dry_run" name="dry_run" {% if form_state.dry_run %}checked{% endif %} />
+                          <label class="form-check-label" for="dry_run">Dry run (no emails sent)</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <button type="submit" id="submit_btn" class="btn btn-success px-4">
+                    <span id="submit_text">Upload & Send</span>
+                    <span id="submit_spinner" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if summary %}
+      <div class="row g-3 mt-1">
+        <div class="col-6 col-md-3">
+          <div class="card summary-card shadow-sm">
+            <div class="card-body py-3">
+              <div class="text-muted small">Total Rows</div>
+              <div class="h5 mb-0">{{ summary.total }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card summary-card shadow-sm">
+            <div class="card-body py-3">
+              <div class="text-muted small">Sent</div>
+              <div class="h5 mb-0 text-success">{{ summary.sent }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card summary-card shadow-sm">
+            <div class="card-body py-3">
+              <div class="text-muted small">Failed</div>
+              <div class="h5 mb-0 text-danger">{{ summary.failed }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card summary-card shadow-sm">
+            <div class="card-body py-3">
+              <div class="text-muted small">Duration</div>
+              <div class="h5 mb-0">{{ summary.elapsed }}s</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if bulk_results %}
+      <div class="card shadow-sm soft-card mt-4 desktop-results">
+        <div class="card-header">
+          <h2 class="h5 mb-0">Bulk Send Results</h2>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive results-wrap">
+            <table class="table table-striped table-hover mb-0 result-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in bulk_results %}
+                <tr>
+                  <td>{{ row.company }}</td>
+                  <td>{{ row.email }}</td>
+                  <td>
+                    {% if row.status == 'sent' %}
+                      <span class="badge text-bg-success">sent</span>
+                    {% elif row.status == 'failed' %}
+                      <span class="badge text-bg-danger">failed</span>
+                    {% else %}
+                      <span class="badge text-bg-secondary">{{ row.status }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ row.detail }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-results mt-3">
+        <h2 class="h6 mb-2">Bulk Send Results</h2>
+        {% for row in bulk_results %}
+        <div class="result-item p-3 shadow-sm">
+          <div class="fw-semibold">{{ row.company }}</div>
+          <div class="small text-muted mb-2">{{ row.email }}</div>
+          <div class="mb-2">
+            {% if row.status == 'sent' %}
+              <span class="badge text-bg-success">sent</span>
+            {% elif row.status == 'failed' %}
+              <span class="badge text-bg-danger">failed</span>
+            {% else %}
+              <span class="badge text-bg-secondary">{{ row.status }}</span>
+            {% endif %}
+          </div>
+          <div class="small">{{ row.detail }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+    <script>
+      document.querySelectorAll('#editor_toolbar button').forEach((button) => {
+        button.setAttribute('type', 'button');
+      });
+
+      const quill = new Quill('#body_editor', {
+        theme: 'snow',
+        placeholder: 'Write your professional outreach message here...',
+        modules: {
+          toolbar: '#editor_toolbar'
+        }
+      });
+
+      quill.root.setAttribute('spellcheck', 'false');
+      quill.root.setAttribute('autocorrect', 'off');
+      quill.root.setAttribute('autocapitalize', 'off');
+      quill.root.setAttribute('data-gramm', 'false');
+
+      quill.root.innerHTML = {{ form_state.body_template_html|tojson }};
+
+      const bulkForm = document.getElementById('bulk_form');
+      const bodyHtmlInput = document.getElementById('body_template_html');
+      const submitBtn = document.getElementById('submit_btn');
+      const submitText = document.getElementById('submit_text');
+      const submitSpinner = document.getElementById('submit_spinner');
+      const subjectInput = document.getElementById('subject_template');
+      const chips = document.querySelectorAll('.template-chip');
+      const resetTemplateBtn = document.getElementById('reset_professional_template');
+      const professionalTemplateHtml = {{ professional_template_html|tojson }};
+
+      chips.forEach((chip) => {
+        chip.addEventListener('click', function () {
+          const value = chip.getAttribute('data-value') || '';
+          const target = chip.getAttribute('data-target');
+
+          if (target === 'subject') {
+            subjectInput.value = `${subjectInput.value} ${value}`.trim();
+            subjectInput.focus();
+            return;
+          }
+
+          const range = quill.getSelection(true);
+          quill.insertText(range.index, value);
+          quill.setSelection(range.index + value.length, 0);
+          quill.focus();
+        });
+      });
+
+      resetTemplateBtn.addEventListener('click', function () {
+        quill.root.innerHTML = professionalTemplateHtml;
+        quill.focus();
+      });
+
+      bulkForm.addEventListener('submit', function () {
+        bodyHtmlInput.value = quill.root.innerHTML;
+        submitBtn.setAttribute('disabled', 'disabled');
+        submitText.textContent = 'Processing...';
+        submitSpinner.classList.remove('d-none');
+      });
+    </script>
+  </body>
+</html>

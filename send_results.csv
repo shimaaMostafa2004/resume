@@ -1,0 +1,4 @@
+company,email,status,detail
+Company One,hr@companyone.com,dry-run,Rendered successfully (not sent)
+Company Two,careers@companytwo.com,dry-run,Rendered successfully (not sent)
+Company Three,recruitment@companythree.com,dry-run,Rendered successfully (not sent)
